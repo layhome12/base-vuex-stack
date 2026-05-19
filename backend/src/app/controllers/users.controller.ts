@@ -28,8 +28,6 @@ export class UsersController {
 
   static async store(req: Request, res: ExResponse): Promise<Response> {
     const body = req.body;
-
-    const auth: JwtPayload = req["user"] as JwtPayload;
     const username = `${body.name.replaceAll(" ", "").toLowerCase()}@${Random.string(3)}`;
 
     // -- save users
@@ -52,9 +50,8 @@ export class UsersController {
 
   static async update(req: Request, res: ExResponse): Promise<Response> {
     const body = req.body;
+    
     const id = Safety.number(req.params.id as string);
-
-    const auth: JwtPayload = req["user"] as JwtPayload;
     const isExist = await UserService.emailIsExist(body.email, id);
 
     if (isExist) {
