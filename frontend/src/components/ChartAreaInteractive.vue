@@ -224,13 +224,13 @@ const filterRange = computed(() => {
           <VisArea
             :x="(d: Data) => d.date"
             :y="[(d: Data) => d.mobile, (d: Data) => d.desktop]"
-            :color="(d: Data, i: number) => ['url(#fillMobile)', 'url(#fillDesktop)'][i]"
+            :color="(_: Data, i: number) => ['url(#fillMobile)', 'url(#fillDesktop)'][i]"
             :opacity="0.6"
           />
           <VisLine
             :x="(d: Data) => d.date"
             :y="[(d: Data) => d.mobile, (d: Data) => d.mobile + d.desktop]"
-            :color="(d: Data, i: number) => [chartConfig.mobile.color, chartConfig.desktop.color][i]"
+            :color="(_: Data, i: number) => [chartConfig.mobile.color, chartConfig.desktop.color][i]"
             :line-width="1"
           />
           <VisAxis
@@ -240,7 +240,7 @@ const filterRange = computed(() => {
             :domain-line="false"
             :grid-line="false"
             :num-ticks="6"
-            :tick-format="(d: number, index: number) => {
+            :tick-format="(d: number) => {
               const date = new Date(d)
               return date.toLocaleDateString('en-US', {
                 month: 'short',
@@ -264,7 +264,7 @@ const filterRange = computed(() => {
                 })
               },
             })"
-            :color="(d: Data, i: number) => [chartConfig.mobile.color, chartConfig.desktop.color][i % 2]"
+            :color="(_: Data, i: number) => [chartConfig.mobile.color, chartConfig.desktop.color][i % 2]"
           />
         </VisXYContainer>
 
