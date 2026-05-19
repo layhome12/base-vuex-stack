@@ -23,8 +23,6 @@ export const useAuthStore = defineStore("auth", {
     },
     async setProfile(profile: Profile) {
       this.profile = profile;
-
-      console.log(this.profile);
     },
     logout() {
       this.token = "";

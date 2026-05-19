@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/stores/auth";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -6,10 +7,16 @@ const router = createRouter({
     {
       path: "/",
       name: "login",
+      meta: {
+        guest: true,
+      },
       component: () => import("@/views/login/Index.vue"),
     },
     {
       path: "/admin",
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("@/layout/Admin.vue"),
       children: [
         {
@@ -30,6 +37,23 @@ const router = createRouter({
       component: () => import("@/layout/404.vue"),
     },
   ],
+});
+
+router.beforeEach((to) => {
+  const auth = useAuthStore();
+  const token = auth.token;
+
+  // Sudah login -> tidak boleh ke login
+  if (to.meta.guest && token) {
+    return "/admin/dashboard";
+  }
+
+  // Belum login -> blok admin
+  if (to.meta.requiresAuth && !token) {
+    return "/";
+  }
+
+  return true;
 });
 
 export default router;
