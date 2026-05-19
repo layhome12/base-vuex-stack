@@ -21,11 +21,6 @@ const props = withDefaults(defineProps<SidebarProps>(), {
 const sidebar = useSidebarStore();
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Acme Inc",
@@ -45,7 +40,7 @@ const data = {
       <NavMain :items="sidebar.menus" />
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <NavUser />
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>

@@ -26,21 +26,19 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useRouter } from "vue-router";
-
-interface User {
-  name: string
-  email: string
-  avatar: string
-}
-
-defineProps<{
-  user: User
-}>()
+import { useAuthStore } from "@/stores/auth";
+import { signOut } from "@/apis/auth.api";
 
 const { isMobile } = useSidebar()
 const router = useRouter();
+const auth = useAuthStore();
 
 const logout = () => {
+  // -- clearing session
+  signOut();
+
+  // -- logout
+  auth.logout();
   router.push("/");
 };
 </script>
@@ -53,15 +51,15 @@ const logout = () => {
           <SidebarMenuButton size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
             <Avatar class="h-8 w-8 rounded-lg grayscale">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
+              <AvatarImage :src="auth.profile.picture ?? ''" :alt="auth.profile.name" />
               <AvatarFallback class="rounded-lg">
                 CN
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ user.name }}</span>
+              <span class="truncate font-medium">{{ auth.profile.name }}</span>
               <span class="text-muted-foreground truncate text-xs">
-                {{ user.email }}
+                {{ auth.profile.email }}
               </span>
             </div>
             <IconDotsVertical class="ml-auto size-4" />
@@ -72,15 +70,15 @@ const logout = () => {
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
+                <AvatarImage :src="auth.profile.picture ?? ''" :alt="auth.profile.name" />
                 <AvatarFallback class="rounded-lg">
                   CN
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-medium">{{ user.name }}</span>
+                <span class="truncate font-medium">{{ auth.profile.name }}</span>
                 <span class="text-muted-foreground truncate text-xs">
-                  {{ user.email }}
+                  {{ auth.profile.email }}
                 </span>
               </div>
             </div>

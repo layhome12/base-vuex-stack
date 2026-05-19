@@ -27,7 +27,7 @@ const refreshAuthToken = async (failedReq: any) => {
       const auth = useAuthStore();
       auth.logout();
 
-      window.location.replace("/logout");
+      window.location.replace("/");
       return Promise.reject();
     }
 
