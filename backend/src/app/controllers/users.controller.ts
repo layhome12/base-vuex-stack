@@ -63,7 +63,7 @@ export class UsersController {
       ]);
     }
 
-    let dataSave: UserSave | object = {
+    let dataSave: UserSave = {
       group_id: body.group_id,
       name: body.name,
       email: body.email,
@@ -72,7 +72,7 @@ export class UsersController {
 
     // -- hash
     if (body.password != null) {
-      dataSave["password"] = Hash.make(body.password);
+      dataSave.password = Hash.make(body.password);
     }
 
     // -- save
