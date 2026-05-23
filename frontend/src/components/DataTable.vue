@@ -32,34 +32,20 @@ import {
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ChevronsRight, ChevronsLeft, Loader2 } from "lucide-vue-next"
 import type { AcceptableValue } from "reka-ui"
-
-interface Pagination {
-  page: number
-  per_page: number
-  total: number
-  last_page: number
-}
+import type { OnChangeTable, PaginationTable } from "@/types/tanstack-table"
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   loading?: boolean
-  pagination: Pagination
+  pagination: PaginationTable
 }>()
 
 const emit = defineEmits<{
-  change: [
-    {
-      page: number
-      per_page: number
-      sort_by?: string
-      sort_desc?: boolean
-    }
-  ]
+  (e: "change", payload: OnChangeTable): void
 }>()
 
 const sorting = ref<SortingState>([])
-
 const table = useVueTable({
   get data() {
     return props.data
@@ -118,7 +104,8 @@ function changeLimit(value: AcceptableValue) {
   <div class="relative overflow-hidden">
     <!-- loading -->
     <div v-if="loading" class="absolute inset-0 z-50 flex items-center justify-center bg-background/30">
-      <div class="flex items-center gap-2 rounded-[7px] bg-zinc-900 text-white dark:bg-white dark:text-black px-5 py-1 my-3">
+      <div
+        class="flex items-center gap-2 rounded-[7px] bg-zinc-900 text-white dark:bg-white dark:text-black px-5 py-1 my-3">
         <Loader2 class="h-4 w-4 animate-spin font-bold" />
         <span class="text-[12px]">
           Fetching..
