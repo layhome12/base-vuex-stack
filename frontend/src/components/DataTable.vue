@@ -73,9 +73,13 @@ watch(
   () => {
     emit("change", {
       page: props.pagination.page,
-      per_page: props.pagination.per_page,
+      limit: props.pagination.per_page,
       sort_by: sorting.value[0]?.id,
-      sort_desc: sorting.value[0]?.desc,
+      sort_type: sorting.value[0]
+        ? sorting.value[0].desc
+          ? "desc"
+          : "asc"
+        : undefined,
     })
   },
   { deep: true }
@@ -84,18 +88,26 @@ watch(
 function changePage(page: number) {
   emit("change", {
     page,
-    per_page: props.pagination.per_page,
+    limit: props.pagination.per_page,
     sort_by: sorting.value[0]?.id,
-    sort_desc: sorting.value[0]?.desc,
+    sort_type: sorting.value[0]
+      ? sorting.value[0].desc
+        ? "desc"
+        : "asc"
+      : undefined,
   })
 }
 
 function changeLimit(value: AcceptableValue) {
   emit("change", {
     page: 1,
-    per_page: Number(value),
+    limit: Number(value),
     sort_by: sorting.value[0]?.id,
-    sort_desc: sorting.value[0]?.desc,
+    sort_type: sorting.value[0]
+      ? sorting.value[0].desc
+        ? "desc"
+        : "asc"
+      : undefined,
   })
 }
 </script>
@@ -184,7 +196,7 @@ function changeLimit(value: AcceptableValue) {
     </div>
 
     <!-- PAGINATION -->
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-2">
       <div class="flex items-center gap-2">
         <span class="text-[14px]">Items per page</span>
         <Select size="sm" :default-value="String(pagination.per_page)" @update:model-value="changeLimit">
