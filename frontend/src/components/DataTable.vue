@@ -74,7 +74,7 @@ watch(
     emit("change", {
       page: props.pagination.page,
       limit: props.pagination.per_page,
-      sort_by: sorting.value[0]?.id,
+      sort_by: getOrderKey(),
       sort_type: sorting.value[0]
         ? sorting.value[0].desc
           ? "desc"
@@ -85,11 +85,22 @@ watch(
   { deep: true }
 )
 
+const getOrderKey = () => {
+  const sort = sorting.value[0]
+  if (!sort) return undefined
+
+  const column: any = props.columns.find(
+    (c: any) => c.accessorKey === sort.id
+  )
+
+  return column?.orderKey ?? sort.id;
+}
+
 function changePage(page: number) {
   emit("change", {
     page,
     limit: props.pagination.per_page,
-    sort_by: sorting.value[0]?.id,
+    sort_by: getOrderKey(),
     sort_type: sorting.value[0]
       ? sorting.value[0].desc
         ? "desc"
@@ -102,7 +113,7 @@ function changeLimit(value: AcceptableValue) {
   emit("change", {
     page: 1,
     limit: Number(value),
-    sort_by: sorting.value[0]?.id,
+    sort_by: getOrderKey(),
     sort_type: sorting.value[0]
       ? sorting.value[0].desc
         ? "desc"
@@ -130,7 +141,7 @@ function changeLimit(value: AcceptableValue) {
         <!-- HEADER -->
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" class="cursor-pointer" @click="
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" class="cursor-pointer px-1" @click="
               header.column.getCanSort() &&
               header.column.toggleSorting()
               " :style="header.column.columnDef.size
