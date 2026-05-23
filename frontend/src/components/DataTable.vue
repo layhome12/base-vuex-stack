@@ -31,7 +31,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ChevronsRight, ChevronsLeft, Loader2 } from "lucide-vue-next"
-import { AcceptableValue } from "reka-ui"
+import type { AcceptableValue } from "reka-ui"
 
 interface Pagination {
   page: number

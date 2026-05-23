@@ -121,7 +121,7 @@ onMounted(fetchData)
     <div class="@container/main flex flex-1 flex-col gap-2">
         <DataTable class="table-striped" :columns="columns" :data="data" :loading="loading" :pagination="pagination"
             @change="handleTableChange">
-            <template #action="{ row }">
+            <template #action="{ }">
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
                         <Button variant="ghost" class="h-8 w-8 p-0">
