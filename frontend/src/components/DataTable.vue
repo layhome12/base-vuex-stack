@@ -141,20 +141,26 @@ function changeLimit(value: AcceptableValue) {
         <!-- HEADER -->
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" class="cursor-pointer px-1" @click="
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" :class="[
+              'px-1',
+              header.column.getCanSort()
+                ? 'cursor-pointer'
+                : 'cursor-default'
+            ]" @click="
               header.column.getCanSort() &&
               header.column.toggleSorting()
               " :style="header.column.columnDef.size
-                ? {
-                  width: `${header.getSize()}px`,
-                  minWidth: `${header.getSize()}px`,
-                  maxWidth: `${header.getSize()}px`,
-                }
-                : {}
-                ">
+                  ? {
+                    width: `${header.getSize()}px`,
+                    minWidth: `${header.getSize()}px`,
+                    maxWidth: `${header.getSize()}px`,
+                  }
+                  : {}
+                  ">
               <div class="flex items-center gap-2" :class="{
                 'justify-start':
-                  header.column.columnDef.meta?.align === 'left' || !header.column.columnDef.meta?.align,
+                  header.column.columnDef.meta?.align === 'left' ||
+                  !header.column.columnDef.meta?.align,
                 'justify-center':
                   header.column.columnDef.meta?.align === 'center',
                 'justify-end':
@@ -162,8 +168,11 @@ function changeLimit(value: AcceptableValue) {
               }">
                 <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header"
                   :props="header.getContext()" />
-                <ArrowUp v-if="header.column.getIsSorted() === 'asc'" class="w-4 h-4" />
-                <ArrowDown v-if="header.column.getIsSorted() === 'desc'" class="w-4 h-4" />
+
+                <template v-if="header.column.getCanSort()">
+                  <ArrowUp v-if="header.column.getIsSorted() === 'asc'" class="w-4 h-4" />
+                  <ArrowDown v-if="header.column.getIsSorted() === 'desc'" class="w-4 h-4" />
+                </template>
               </div>
             </TableHead>
           </TableRow>
