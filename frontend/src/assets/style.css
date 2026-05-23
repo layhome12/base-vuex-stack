@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 @import "tailwindcss";
 
@@ -125,4 +125,12 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.table-striped tbody tr:nth-child(even) {
+  @apply bg-muted/30;
+}
+
+.table-striped tbody tr:hover {
+  @apply bg-muted/50;
 }

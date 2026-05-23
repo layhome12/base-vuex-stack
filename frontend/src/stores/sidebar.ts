@@ -25,15 +25,15 @@ export const useSidebarStore = defineStore("sidebar", {
         items: [],
       },
       {
-        title: "Playground",
+        title: "System",
         url: "#",
         icon: "square-terminal",
         isActive: true,
         items: [
           {
-            title: "Datatable",
-            url: "/admin/datatable",
-            icon: "align-vertical-distribute-center",
+            title: "Users",
+            url: "/admin/system/users",
+            icon: "user-round-cog",
           },
         ],
       },

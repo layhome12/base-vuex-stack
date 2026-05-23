@@ -25,9 +25,15 @@ const router = createRouter({
           component: () => import("@/views/admin/dashboard/index.vue"),
         },
         {
-          path: "datatable",
-          name: "datatable",
-          component: () => import("@/views/admin/datatable/Index.vue"),
+          path: "system",
+          name: "system",
+          children: [
+            {
+              path: "users",
+              name: "users",
+              component: () => import("@/views/admin/system/users/Index.vue"),
+            },
+          ],
         },
       ],
     },
