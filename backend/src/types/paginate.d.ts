@@ -1,6 +1,8 @@
 type PaginateInput = {
   page: number;
   limit: number;
+  sortBy?: string;
+  sortType?: string;
 };
 
 type PaginateOutput = {
@@ -12,4 +14,8 @@ type PaginateOutput = {
     totalPages: number;
     currentPage: number;
   };
+};
+
+type PaginateOptions = {
+  allowedOrderColumn: string[];
 };

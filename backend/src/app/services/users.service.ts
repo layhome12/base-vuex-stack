@@ -36,11 +36,21 @@ export class UserService {
         "gr.name as group",
         "us.name",
         "us.username",
+        "us.email",
+        "us.is_blocked",
         "us.picture",
-      ])
-      .orderBy("us.created_at", "desc");
+        "us.created_at",
+      ]);
 
-    return await KnexPaginator.result(query, pageIn);
+    return await KnexPaginator.result(query, pageIn, {
+      allowedOrderColumn: [
+        "gr.name",
+        "us.name",
+        "us.username",
+        "us.email",
+        "us.created_at",
+      ],
+    });
   }
 
   static async findByEmail(email: string) {

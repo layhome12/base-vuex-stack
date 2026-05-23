@@ -11,7 +11,13 @@ export class UsersController {
     const limit = Safety.number(req.query.limit as string);
     const search = (req.query.search as string) || "";
 
-    const data = await UserService.findAll({ page, limit }, search);
+    const sortBy = (req.query.sort_by as string) || "";
+    const sortType = (req.query.sort_type as string) || "";
+
+    const data = await UserService.findAll(
+      { page, limit, sortBy, sortType },
+      search,
+    );
     return Response.http(res, 200, "Fetch users successful", data);
   }
 
@@ -50,7 +56,7 @@ export class UsersController {
 
   static async update(req: Request, res: ExResponse): Promise<Response> {
     const body = req.body;
-    
+
     const id = Safety.number(req.params.id as string);
     const isExist = await UserService.emailIsExist(body.email, id);
 
