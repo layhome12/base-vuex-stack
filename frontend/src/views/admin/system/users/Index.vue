@@ -7,140 +7,125 @@ import DropdownMenuContent from "@/components/ui/dropdown-menu/DropdownMenuConte
 import DropdownMenuItem from "@/components/ui/dropdown-menu/DropdownMenuItem.vue"
 import DropdownMenuSeparator from "@/components/ui/dropdown-menu/DropdownMenuSeparator.vue"
 import DropdownMenuTrigger from "@/components/ui/dropdown-menu/DropdownMenuTrigger.vue"
-import { ref, onMounted } from "vue"
+import InputGroup from "@/components/ui/input-group/InputGroup.vue"
+import InputGroupAddon from "@/components/ui/input-group/InputGroupAddon.vue"
+import InputGroupInput from "@/components/ui/input-group/InputGroupInput.vue"
+import { useUserStore } from "@/stores/system/users.store"
+import { ref, onMounted, watch } from "vue"
 
-const data = ref([])
-const loading = ref(false)
+let debounce: ReturnType<typeof setTimeout>
 
-const pagination = ref({
-    page: 1,
-    per_page: 10,
-    total: 0,
-    last_page: 1,
-})
-
+const userStore = useUserStore();
 const columns = ref([
     {
         accessorKey: "action",
         header: "",
-        size: 10,
+        size: 50,
         meta: {
             align: "center" as const,
         },
+        enableSorting: false,
+    },
+    {
+        accessorKey: "group",
+        orderKey: "gr.name",
+        header: "Group",
+        enableSorting: true,
     },
     {
         accessorKey: "name",
+        orderKey: "us.name",
         header: "Name",
         enableSorting: true,
     },
     {
         accessorKey: "email",
+        orderKey: "us.email",
         header: "Email",
+        enableSorting: true,
     },
     {
-        accessorKey: "age",
-        header: "Age",
+        accessorKey: "is_blocked",
+        header: "Is Blocked",
+        enableSorting: false,
+    },
+    {
+        accessorKey: "created_at",
+        orderKey: "us.created_at",
+        header: "Created At",
+        enableSorting: true,
     },
 ])
 
-async function fetchData(params: any = {}) {
-    loading.value = true
-
-    await new Promise((resolve) =>
-        setTimeout(resolve, 500)
-    )
-
-    // dummy total data
-    const allData = Array.from(
-        { length: 30 },
-        (_, i) => ({
-            id: i + 1,
-            name: `User ${i + 1}`,
-            email: `user${i + 1}@mail.com`,
-            age: 20 + (i % 10),
-        })
-    )
-
-    const page =
-        params.page ?? pagination.value.page
-
-    const perPage =
-        params.per_page ??
-        pagination.value.per_page
-
-    const sortBy = params.sort_by
-    const sortDesc = params.sort_desc
-
-    let rows = [...allData]
-
-    // sorting
-    if (sortBy) {
-        rows.sort((a: any, b: any) => {
-            if (a[sortBy] < b[sortBy])
-                return sortDesc ? 1 : -1
-
-            if (a[sortBy] > b[sortBy])
-                return sortDesc ? -1 : 1
-
-            return 0
-        })
+function init() {
+    if (!userStore.items.length) {
+        userStore.fetchData();
     }
-
-    // pagination
-    const start =
-        (page - 1) * perPage
-
-    const end =
-        start + perPage
-
-    data.value = rows.slice(start, end) as any
-
-    pagination.value = {
-        page,
-        per_page: perPage,
-        total: rows.length,
-        last_page: Math.ceil(
-            rows.length / perPage
-        ),
-    }
-
-    loading.value = false
 }
 
-function handleTableChange(payload: any) {
-    pagination.value.page = payload.page
-    pagination.value.per_page = payload.per_page
-
-    fetchData(payload)
+function search() {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+        userStore.params.page = 1;
+        userStore.fetchData();
+    }, 500);
 }
 
-onMounted(fetchData)
+watch(() => userStore.search, () => search());
+onMounted(() => init())
 </script>
 
 <template>
     <div class="@container/main flex flex-1 flex-col gap-2">
-        <DataTable class="table-striped" :columns="columns" :data="data" :loading="loading" :pagination="pagination"
-            @change="handleTableChange">
-            <template #action="{ }">
-                <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                        <Button variant="ghost" class="h-8 w-8 p-0">
-                            <LucideIcon icon="settings-2" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuItem>
-                            <LucideIcon icon="square-pen" class="mr-2 h-4 w-4" />
-                            Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem class="text-destructive focus:text-destructive">
-                            <LucideIcon icon="trash-2" class="mr-2 h-4 w-4" />
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </template>
-        </DataTable>
+        <div class="m-4">
+            <div class="mb-5">
+                <h4 class="text-[22px] leading-none mb-1">
+                    <LucideIcon icon="user-cog" class="inline mr-1 w-5 h-5"></LucideIcon> Users
+                </h4>
+                <p class="text-sm text-muted-foreground">
+                    Manage user accounts and permission
+                </p>
+            </div>
+
+            <div class="flex flex-2 justify-start gap-2 my-2">
+                <div>
+                    <Button variant="default" size="sm" class="h-8 px-3">
+                        <LucideIcon icon="plus" class="w-4 h-4" />
+                    </Button>
+                </div>
+                <div>
+                    <InputGroup class="h-8">
+                        <InputGroupInput v-model="userStore.search" placeholder="Search.." class="h-8 text-sm" />
+                        <InputGroupAddon class="h-8 px-2">
+                            <LucideIcon icon="search" class="w-4 h-4" />
+                        </InputGroupAddon>
+                    </InputGroup>
+                </div>
+            </div>
+
+            <DataTable class="table-striped" :columns="columns" :data="userStore.items" :loading="userStore.loading"
+                :pagination="userStore.paginate" @change="userStore.onTableChange">
+                <template #action="{ }">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <Button variant="ghost" class="h-8 w-8 p-0">
+                                <LucideIcon icon="settings-2" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem>
+                                <LucideIcon icon="square-pen" class="mr-2 h-4 w-4" />
+                                Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem class="text-destructive focus:text-destructive">
+                                <LucideIcon icon="trash-2" class="mr-2 h-4 w-4" />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </template>
+            </DataTable>
+        </div>
     </div>
 </template>

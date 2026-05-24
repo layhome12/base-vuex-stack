@@ -4,9 +4,10 @@ import createAuthRefreshInterceptor from "axios-auth-refresh";
 // Auto Refresh Token
 createAuthRefreshInterceptor(baseApi, refreshAuthToken);
 
-const getUsers = async () => {
+const getUsers = async (params: any) => {
   try {
-    return await baseApi.get("/users?limit=100", {
+    return await baseApi.get("/users", {
+      params,
       headers: {
         Authorization: "Bearer " + getBearer(),
       },

@@ -218,7 +218,7 @@ function changeLimit(value: AcceptableValue) {
     <!-- PAGINATION -->
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center gap-2">
-        <span class="text-[14px]">Items per page</span>
+        <span class="text-[14px] hidden md:block">Items per page</span>
         <Select size="sm" :default-value="String(pagination.per_page)" @update:model-value="changeLimit">
           <SelectTrigger class="w-20">
             <SelectValue />

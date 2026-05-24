@@ -63,7 +63,7 @@ const login = async () => {
                     <div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
                         <LucideIcon icon="GalleryVerticalEnd" class="size-4"></LucideIcon>
                     </div>
-                    Acme Inc.
+                    MadHome Dev
                 </a>
             </div>
             <div class="flex flex-1 items-center justify-center">

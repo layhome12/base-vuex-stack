@@ -23,7 +23,7 @@ const sidebar = useSidebarStore();
 const data = {
   teams: [
     {
-      name: "Acme Inc",
+      name: "MadHome Dev",
       logo: "gallery-vertical-end",
       plan: "Enterprise",
     },
