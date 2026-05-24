@@ -12,9 +12,11 @@ import InputGroupAddon from "@/components/ui/input-group/InputGroupAddon.vue"
 import InputGroupInput from "@/components/ui/input-group/InputGroupInput.vue"
 import { useUserStore } from "@/stores/system/users.store"
 import { ref, onMounted, watch } from "vue"
+import { useRouter } from "vue-router"
 
 let debounce: ReturnType<typeof setTimeout>
 
+const router = useRouter();
 const userStore = useUserStore();
 const columns = ref([
     {
@@ -71,6 +73,21 @@ function search() {
     }, 500);
 }
 
+function create() {
+    userStore.resetForm();
+    router.push({
+        name: 'user-create'
+    });
+}
+
+function edit(item: any) {
+    console.log(item);
+
+    router.push({
+        name: 'user-edit'
+    });
+}
+
 watch(() => userStore.search, () => search());
 onMounted(() => init())
 </script>
@@ -89,7 +106,7 @@ onMounted(() => init())
 
             <div class="flex flex-2 justify-start gap-2 my-2">
                 <div>
-                    <Button variant="default" size="sm" class="h-8 px-3">
+                    <Button @click="create" variant="default" size="sm" class="h-8 px-3 cursor-pointer">
                         <LucideIcon icon="plus" class="w-4 h-4" />
                     </Button>
                 </div>
@@ -108,17 +125,17 @@ onMounted(() => init())
                 <template #action="{ }">
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
-                            <Button variant="ghost" class="h-8 w-8 p-0">
+                            <Button variant="ghost" class="h-8 w-8 p-0 cursor-pointer" >
                                 <LucideIcon icon="settings-2" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem @click="edit" class="cursor-pointer">
                                 <LucideIcon icon="square-pen" class="mr-2 h-4 w-4" />
                                 Edit
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem class="text-destructive focus:text-destructive">
+                            <DropdownMenuItem class="text-destructive focus:text-destructive cursor-pointer">
                                 <LucideIcon icon="trash-2" class="mr-2 h-4 w-4" />
                                 Delete
                             </DropdownMenuItem>

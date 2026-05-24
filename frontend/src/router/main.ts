@@ -31,7 +31,26 @@ const router = createRouter({
             {
               path: "users",
               name: "users",
-              component: () => import("@/views/admin/system/users/Index.vue"),
+              children: [
+                {
+                  path: "",
+                  name: "user-index",
+                  component: () =>
+                    import("@/views/admin/system/users/Index.vue"),
+                },
+                {
+                  path: "create",
+                  name: "user-create",
+                  component: () =>
+                    import("@/views/admin/system/users/Create.vue"),
+                },
+                {
+                  path: "edit",
+                  name: "user-edit",
+                  component: () =>
+                    import("@/views/admin/system/users/Edit.vue"),
+                },
+              ],
             },
           ],
         },
