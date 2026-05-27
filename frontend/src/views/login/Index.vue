@@ -38,7 +38,7 @@ const login = async () => {
     loading.value = false;
 
     if (res.statusCode == 400) {
-        errorMessage.value = res.message;
+        errorMessage.value = res.errors;
         return;
     }
 
