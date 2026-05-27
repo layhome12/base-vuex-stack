@@ -27,17 +27,16 @@ class Response {
   public static httpBadReq(
     res: ExpressResponse,
     statusCode: number,
-    message: MessageBadRequest[],
+    errors: MessageBadRequest[],
+    message: string = "Please fill required field",
   ) {
     return res.status(statusCode).json({
       statusCode,
-      error: "Bad Request",
       message,
+      errors,
     });
   }
 }
 
 export default Response;
-export {
-  MessageBadRequest
-}
+export { MessageBadRequest };
