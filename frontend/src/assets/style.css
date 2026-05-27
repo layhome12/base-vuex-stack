@@ -134,3 +134,7 @@
 .table-striped tbody tr:hover {
   @apply bg-muted/50;
 }
+
+button {
+  cursor: pointer;
+}

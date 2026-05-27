@@ -38,18 +38,6 @@ const router = createRouter({
                   component: () =>
                     import("@/views/admin/system/users/Index.vue"),
                 },
-                {
-                  path: "create",
-                  name: "user-create",
-                  component: () =>
-                    import("@/views/admin/system/users/Create.vue"),
-                },
-                {
-                  path: "edit",
-                  name: "user-edit",
-                  component: () =>
-                    import("@/views/admin/system/users/Edit.vue"),
-                },
               ],
             },
           ],
