@@ -39,7 +39,7 @@ export const useNameStore = defineStore("storeName", {
           search: this.search,
         });
 
-        const { items, meta } = res.data.data as FetchResponseTable;
+        const { items, meta } = res.data as FetchResponseTable;
         this.items = items;
 
         this.paginate = {

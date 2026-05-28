@@ -1,3 +1,4 @@
+import { getGroups } from "@/apis/groups.api";
 import { getUsers } from "@/apis/users.api";
 import type {
   FetchResponseTable,
@@ -22,12 +23,14 @@ interface UserStore {
   paginate: PaginationTable;
   params: OnChangeTable;
   form: FormUser;
+  groups: any[];
 }
 
 export const useUserStore = defineStore("users", {
   state: (): UserStore => ({
     loading: false,
     items: [],
+    groups: [],
     search: "",
     paginate: {
       page: 1,
@@ -38,6 +41,8 @@ export const useUserStore = defineStore("users", {
     params: {
       page: 1,
       limit: 10,
+      sort_by: "us.created_at",
+      sort_type: "desc",
     },
     form: {
       id: 0,
@@ -57,7 +62,7 @@ export const useUserStore = defineStore("users", {
           search: this.search,
         });
 
-        const { items, meta } = res.data.data as FetchResponseTable;
+        const { items, meta } = res.data as FetchResponseTable;
         this.items = items;
 
         this.paginate = {
@@ -77,6 +82,11 @@ export const useUserStore = defineStore("users", {
 
       this.params = payload;
       await this.fetchData();
+    },
+
+    async fetchGroup() {
+      const res = await getGroups();
+      this.groups = res.data;
     },
 
     resetForm() {

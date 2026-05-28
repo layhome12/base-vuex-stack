@@ -23,14 +23,24 @@ import SelectContent from "@/components/ui/select/SelectContent.vue"
 import SelectItem from "@/components/ui/select/SelectItem.vue"
 import SelectTrigger from "@/components/ui/select/SelectTrigger.vue"
 import SelectValue from "@/components/ui/select/SelectValue.vue"
+import Spinner from "@/components/ui/spinner/Spinner.vue"
 import Textarea from "@/components/ui/textarea/Textarea.vue"
 import { useUserStore } from "@/stores/system/users.store"
 import { ref, onMounted, watch } from "vue"
+import ErrorField, { type ErrorMessage } from "@/components/ErrorField.vue";
+import { saveUser } from "@/apis/users.api"
+import { toast } from "vue-sonner"
+import { Response } from "@/lib/response"
 
 let debounce: ReturnType<typeof setTimeout>
 
 const userStore = useUserStore();
 const dialog = ref(false);
+const loading = ref({
+    onSave: false,
+})
+const errorMessage = ref<ErrorMessage[]>([]);
+
 const columns = ref([
     {
         accessorKey: "action",
@@ -73,7 +83,9 @@ const columns = ref([
 ])
 
 function init() {
+    // -- fetch
     if (!userStore.items.length) {
+        userStore.fetchGroup();
         userStore.fetchData();
     }
 }
@@ -95,6 +107,23 @@ function edit(item: any) {
     console.log(item);
 
     dialog.value = true;
+}
+
+async function save() {
+    loading.value.onSave = true;
+    const res = await saveUser(userStore.form);
+    loading.value.onSave = false;
+
+    if (!Response.isOk(res)) {
+        errorMessage.value = res.errors ?? [];
+        toast.error(res.message);
+        return;
+    }
+
+    dialog.value = false;
+    toast.success("Saved successfull");
+
+    userStore.fetchData();
 }
 
 watch(() => userStore.search, () => search());
@@ -131,7 +160,7 @@ onMounted(() => init())
 
             <DataTable class="table-striped" :columns="columns" :data="userStore.items" :loading="userStore.loading"
                 :pagination="userStore.paginate" @change="userStore.onTableChange">
-                <template #action="{ }">
+                <template #action="{ row }">
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <Button variant="ghost" class="h-8 w-8 p-0 cursor-pointer">
@@ -139,7 +168,7 @@ onMounted(() => init())
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            <DropdownMenuItem @click="edit" class="cursor-pointer">
+                            <DropdownMenuItem @click="edit(row)" class="cursor-pointer">
                                 <LucideIcon icon="square-pen" class="mr-2 h-4 w-4" />
                                 Edit
                             </DropdownMenuItem>
@@ -154,7 +183,7 @@ onMounted(() => init())
             </DataTable>
 
             <Dialog v-model:open="dialog">
-                <DialogContent class="sm:max-w-[500px]">
+                <DialogContent class="sm:max-w-[540px]">
                     <DialogHeader>
                         <DialogTitle>Form User</DialogTitle>
                         <DialogDescription>
@@ -169,33 +198,32 @@ onMounted(() => init())
                                     <SelectValue placeholder="Select group" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="1">
-                                        Admin
-                                    </SelectItem>
-                                    <SelectItem value="2">
-                                        Staff
-                                    </SelectItem>
-                                    <SelectItem value="3">
-                                        User
+                                    <SelectItem v-for="item, key in userStore.groups" :key="key" :value="item.id">
+                                        {{ item.name }}
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+                            <ErrorField name="group_id" :data="errorMessage" />
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <Label class="mb-2">Name</Label>
                             <Input v-model="userStore.form.name" placeholder="Enter full name" />
+                            <ErrorField name="name" :data="errorMessage" />
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <Label class="mb-2">Email</Label>
                             <Input type="email" v-model="userStore.form.email" placeholder="user@gmail.com" />
+                            <ErrorField name="email" :data="errorMessage" />
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <Label class="mb-2">Password</Label>
                             <Input type="password" v-model="userStore.form.password" placeholder="••••••••" />
+                            <ErrorField name="password" :data="errorMessage" />
                         </div>
                         <div class="col-span-2">
                             <Label class="mb-2">Biodata</Label>
                             <Textarea rows="5" v-model="userStore.form.biodata" placeholder="Write short biodata.." />
+                            <ErrorField name="biodata" :data="errorMessage" />
                         </div>
                     </div>
 
@@ -203,8 +231,10 @@ onMounted(() => init())
                         <Button variant="outline" @click="dialog = false">
                             Cancel
                         </Button>
-                        <Button>
-                            <LucideIcon icon="save"></LucideIcon> Save
+                        <Button @click="save" :disabled="loading.onSave">
+                            <Spinner v-if="loading.onSave" class="animate-spin" />
+                            <LucideIcon v-else icon="save" class="mr-1" />
+                            {{ loading.onSave ? "Saving.." : "Save" }}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

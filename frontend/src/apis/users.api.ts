@@ -6,15 +6,31 @@ createAuthRefreshInterceptor(baseApi, refreshAuthToken);
 
 const getUsers = async (params: any) => {
   try {
-    return await baseApi.get("/users", {
+    const res = await baseApi.get("/users", {
       params,
       headers: {
         Authorization: "Bearer " + getBearer(),
       },
     });
+
+    return res.data;
   } catch (error: any) {
     return error.response.data;
   }
 };
 
-export { getUsers };
+const saveUser = async (payload: any) => {
+  try {
+    const res =await baseApi.post("/users", payload, {
+      headers: {
+        Authorization: "Bearer " + getBearer(),
+      },
+    });
+
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};
+
+export { getUsers, saveUser };
