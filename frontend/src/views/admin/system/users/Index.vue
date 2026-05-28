@@ -28,16 +28,30 @@ import Textarea from "@/components/ui/textarea/Textarea.vue"
 import { useUserStore } from "@/stores/system/users.store"
 import { ref, onMounted, watch } from "vue"
 import ErrorField, { type ErrorMessage } from "@/components/ErrorField.vue";
-import { saveUser } from "@/apis/users.api"
+import { removeUser, saveUser } from "@/apis/users.api"
 import { toast } from "vue-sonner"
 import { Response } from "@/lib/response"
+import AlertDialog from "@/components/ui/alert-dialog/AlertDialog.vue"
+import AlertDialogContent from "@/components/ui/alert-dialog/AlertDialogContent.vue"
+import AlertDialogHeader from "@/components/ui/alert-dialog/AlertDialogHeader.vue"
+import AlertDialogTitle from "@/components/ui/alert-dialog/AlertDialogTitle.vue"
+import AlertDialogDescription from "@/components/ui/alert-dialog/AlertDialogDescription.vue"
+import AlertDialogFooter from "@/components/ui/alert-dialog/AlertDialogFooter.vue"
+import AlertDialogCancel from "@/components/ui/alert-dialog/AlertDialogCancel.vue"
+import AlertDialogAction from "@/components/ui/alert-dialog/AlertDialogAction.vue"
+import Badge from "@/components/ui/badge/Badge.vue"
+import { formatDate } from "@/lib/helper"
 
 let debounce: ReturnType<typeof setTimeout>
 
 const userStore = useUserStore();
-const dialog = ref(false);
+const dialog = ref({
+    save: false,
+    remove: false,
+});
 const loading = ref({
     onSave: false,
+    onRemove: false,
 })
 const errorMessage = ref<ErrorMessage[]>([]);
 
@@ -100,13 +114,20 @@ function search() {
 
 function create() {
     userStore.resetForm();
-    dialog.value = true;
+    dialog.value.save = true;
 }
 
 function edit(item: any) {
-    console.log(item);
+    userStore.form = {
+        id: item.id,
+        group_id: item.group_id,
+        name: item.name,
+        email: item.email,
+        password: "",
+        biodata: item.biodata
+    }
 
-    dialog.value = true;
+    dialog.value.save = true;
 }
 
 async function save() {
@@ -120,8 +141,25 @@ async function save() {
         return;
     }
 
-    dialog.value = false;
+    dialog.value.save = false;
     toast.success("Saved successfull");
+
+    userStore.fetchData();
+}
+
+async function remove() {
+    loading.value.onRemove = true;
+    const res = await removeUser(userStore.form.id);
+    loading.value.onRemove = false;
+
+    if (!Response.isOk(res)) {
+        errorMessage.value = res.errors ?? [];
+        toast.error(res.message);
+        return;
+    }
+
+    dialog.value.remove = false;
+    toast.success("Remove successfull");
 
     userStore.fetchData();
 }
@@ -133,7 +171,7 @@ onMounted(() => init())
 <template>
     <div class="@container/main flex flex-1 flex-col gap-2">
         <div class="m-6">
-            <div class="mb-5">
+            <div class="mb-3">
                 <h4 class="text-[22px] leading-none mb-1">
                     <LucideIcon icon="user-cog" class="inline mr-1 w-5 h-5"></LucideIcon> Users
                 </h4>
@@ -160,6 +198,16 @@ onMounted(() => init())
 
             <DataTable class="table-striped" :columns="columns" :data="userStore.items" :loading="userStore.loading"
                 :pagination="userStore.paginate" @change="userStore.onTableChange">
+                <template #is_blocked="{ row }">
+                    <Badge :variant="!row.is_blocked ? 'default' : 'destructive'">
+                        <LucideIcon :icon="!row.is_blocked ? 'circle-check-big' : 'circle-x'"
+                            class="h-3.5 w-3.5 mr-1" />
+                        {{ !row.is_blocked ? "Active" : "Deactive" }}
+                    </Badge>
+                </template>
+                <template #created_at="{ row }">
+                    {{ formatDate(row.created_at) }}
+                </template>
                 <template #action="{ row }">
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
@@ -173,7 +221,8 @@ onMounted(() => init())
                                 Edit
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem class="text-destructive focus:text-destructive cursor-pointer">
+                            <DropdownMenuItem @click="() => { dialog.remove = true; userStore.form.id = row.id; }"
+                                class="text-destructive focus:text-destructive cursor-pointer">
                                 <LucideIcon icon="trash-2" class="mr-2 h-4 w-4" />
                                 Delete
                             </DropdownMenuItem>
@@ -182,7 +231,7 @@ onMounted(() => init())
                 </template>
             </DataTable>
 
-            <Dialog v-model:open="dialog">
+            <Dialog v-model:open="dialog.save">
                 <DialogContent class="sm:max-w-[540px]">
                     <DialogHeader>
                         <DialogTitle>Form User</DialogTitle>
@@ -228,7 +277,7 @@ onMounted(() => init())
                     </div>
 
                     <DialogFooter>
-                        <Button variant="outline" @click="dialog = false">
+                        <Button variant="outline" @click="dialog.save = false" :disabled="loading.onSave">
                             Cancel
                         </Button>
                         <Button @click="save" :disabled="loading.onSave">
@@ -239,6 +288,37 @@ onMounted(() => init())
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+
+            <AlertDialog v-model:open="dialog.remove">
+                <AlertDialogContent class="sm:max-w-[400px]">
+                    <AlertDialogHeader>
+                        <div
+                            class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                            <LucideIcon icon="triangle-alert" class="text-destructive"></LucideIcon>
+                        </div>
+                        <AlertDialogTitle class="text-center text-xl">
+                            Delete Data ?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription class="text-center">
+                            This action cannot be undone.
+                            Deleted data will be permanently removed
+                            from the system.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter class="mt-4">
+                        <AlertDialogCancel :disabled="loading.onRemove">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction @click.prevent="remove" :disabled="loading.onRemove"
+                            class="bg-destructive text-white hover:bg-destructive/90">
+                            <Spinner v-if="loading.onRemove" class="animate-spin" />
+                            <LucideIcon v-else icon="trash-2" class="mr-1" />
+                            {{ loading.onRemove ? "Deleting.." : "Delete" }}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     </div>
 </template>

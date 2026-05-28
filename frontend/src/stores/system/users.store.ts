@@ -41,8 +41,6 @@ export const useUserStore = defineStore("users", {
     params: {
       page: 1,
       limit: 10,
-      sort_by: "us.created_at",
-      sort_type: "desc",
     },
     form: {
       id: 0,

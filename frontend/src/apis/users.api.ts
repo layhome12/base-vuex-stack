@@ -21,7 +21,31 @@ const getUsers = async (params: any) => {
 
 const saveUser = async (payload: any) => {
   try {
-    const res =await baseApi.post("/users", payload, {
+    let res = null;
+
+    if (payload.id) {
+      res = await baseApi.put(`/users/${payload.id}`, payload, {
+        headers: {
+          Authorization: "Bearer " + getBearer(),
+        },
+      });
+    } else {
+      res = await baseApi.post("/users", payload, {
+        headers: {
+          Authorization: "Bearer " + getBearer(),
+        },
+      });
+    }
+
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};
+
+const removeUser = async (id?: number) => {
+  try {
+    const res = await baseApi.delete(`/users/${id}`, {
       headers: {
         Authorization: "Bearer " + getBearer(),
       },
@@ -33,4 +57,4 @@ const saveUser = async (payload: any) => {
   }
 };
 
-export { getUsers, saveUser };
+export { getUsers, saveUser, removeUser };

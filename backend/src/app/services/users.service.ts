@@ -33,12 +33,14 @@ export class UserService {
       })
       .select([
         "us.id",
+        "us.group_id",
         "gr.name as group",
         "us.name",
         "us.username",
         "us.email",
         "us.is_blocked",
         "us.picture",
+        "us.biodata",
         "us.created_at",
       ]);
 
