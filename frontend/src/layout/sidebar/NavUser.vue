@@ -53,7 +53,14 @@ const logout = () => {
             <Avatar class="h-8 w-8 rounded-lg grayscale">
               <AvatarImage :src="auth.profile.picture ?? ''" :alt="auth.profile.name" />
               <AvatarFallback class="rounded-lg">
-                CN
+                {{
+                  auth.profile.name
+                    ?.split(' ')
+                    .filter(Boolean)
+                    .slice(0, 2)
+                    .map((v: string) => v.charAt(0).toUpperCase())
+                    .join('')
+                }}
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
