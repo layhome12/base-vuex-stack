@@ -105,3 +105,25 @@ Content-Type: application/json
   "password": null,
   "biodata": "-"
 }
+
+# --------------------------------------------------
+# SIDEBARS
+# --------------------------------------------------
+
+### GET SIDEBAR
+GET {{base_url}}/api/sidebars
+Authorization: Bearer {{token}}
+
+### CREATE SIDEBAR
+POST {{base_url}}/api/sidebars
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "key": "master",
+  "parent_key": null,
+  "seq": 1,
+  "name": "Master",
+  "icon": "database",
+  "route": "/"
+}
