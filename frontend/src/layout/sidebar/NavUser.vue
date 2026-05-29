@@ -33,6 +33,15 @@ const { isMobile } = useSidebar()
 const router = useRouter();
 const auth = useAuthStore();
 
+function picName() {
+  return auth.profile.name
+    ?.split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((v: string) => v.charAt(0).toUpperCase())
+    .join('')
+}
+
 const logout = () => {
   // -- clearing session
   signOut();
@@ -53,14 +62,7 @@ const logout = () => {
             <Avatar class="h-8 w-8 rounded-lg grayscale">
               <AvatarImage :src="auth.profile.picture ?? ''" :alt="auth.profile.name" />
               <AvatarFallback class="rounded-lg">
-                {{
-                  auth.profile.name
-                    ?.split(' ')
-                    .filter(Boolean)
-                    .slice(0, 2)
-                    .map((v: string) => v.charAt(0).toUpperCase())
-                    .join('')
-                }}
+                {{ picName() }}
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
@@ -79,7 +81,7 @@ const logout = () => {
               <Avatar class="h-8 w-8 rounded-lg">
                 <AvatarImage :src="auth.profile.picture ?? ''" :alt="auth.profile.name" />
                 <AvatarFallback class="rounded-lg">
-                  CN
+                  {{ picName() }}
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
