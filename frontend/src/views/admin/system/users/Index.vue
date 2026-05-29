@@ -239,7 +239,7 @@ onMounted(() => init())
                             Fill user information below.
                         </DialogDescription>
                     </DialogHeader>
-                    <div class="grid gap-5 md:grid-cols-2">
+                    <div class="grid gap-3 md:grid-cols-2">
                         <div class="col-span-2 md:col-span-1">
                             <Label class="mb-2">Group</Label>
                             <Select v-model="userStore.form.group_id">
@@ -289,16 +289,15 @@ onMounted(() => init())
                 </DialogContent>
             </Dialog>
 
-
             <AlertDialog v-model:open="dialog.remove">
                 <AlertDialogContent class="sm:max-w-[400px]">
                     <AlertDialogHeader>
                         <div
-                            class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                            class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
                             <LucideIcon icon="triangle-alert" class="text-destructive"></LucideIcon>
                         </div>
                         <AlertDialogTitle class="text-center text-xl">
-                            Delete Data ?
+                            Warning
                         </AlertDialogTitle>
                         <AlertDialogDescription class="text-center">
                             This action cannot be undone.

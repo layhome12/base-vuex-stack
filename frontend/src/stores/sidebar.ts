@@ -35,6 +35,11 @@ export const useSidebarStore = defineStore("sidebar", {
             url: "/admin/system/users",
             icon: "user-round-cog",
           },
+          {
+            title: "Sidebars",
+            url: "/admin/system/sidebars",
+            icon: "columns-3-cog",
+          },
         ],
       },
     ] as SidebarMenu[],

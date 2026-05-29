@@ -40,6 +40,18 @@ const router = createRouter({
                 },
               ],
             },
+            {
+              path: "sidebars",
+              name: "sidebars",
+              children: [
+                {
+                  path: "",
+                  name: "sidebar-index",
+                  component: () =>
+                    import("@/views/admin/system/sidebars/Index.vue"),
+                },
+              ],
+            },
           ],
         },
       ],
