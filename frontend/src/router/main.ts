@@ -22,7 +22,7 @@ const router = createRouter({
         {
           path: "dashboard",
           name: "dashboard",
-          component: () => import("@/views/admin/dashboard/index.vue"),
+          component: () => import("@/views/admin/dashboard/Index.vue"),
         },
         {
           path: "system",
