@@ -6,5 +6,6 @@ import { SidebarRequest } from "../app/requests/sidebars.request";
 const router = Router();
 router.get("/", SidebarController.index);
 router.post("/", ZodValidator(SidebarRequest), SidebarController.create);
+router.delete("/:key", SidebarController.destroy);
 
 export default router;

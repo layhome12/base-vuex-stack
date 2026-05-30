@@ -58,4 +58,8 @@ export class SidebarService {
       created_at: Dates.now(),
     });
   }
+
+  static async delete(key: string) {
+    await db("sidebars").where("key", key).delete();
+  }
 }

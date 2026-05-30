@@ -27,4 +27,15 @@ export class SidebarController {
       return Response.http(res, 500, "Something wrong when save data");
     }
   }
+
+  static async destroy(req: Request, res: ExResponse): Promise<Response> {
+    const id = req.params.key as string;
+
+    try {
+      await SidebarService.delete(id);
+      return Response.http(res, 200, "Removing successful");
+    } catch (error) {
+      return Response.http(res, 500, "Something wrong when remove data");
+    }
+  }
 }

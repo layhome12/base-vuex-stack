@@ -1,5 +1,5 @@
 @base_url = http://localhost:5000
-@token =
+@token = 
 @refresh_token =
 
 
@@ -8,6 +8,7 @@
 # --------------------------------------------------
 
 ### Login
+# @name login
 POST {{base_url}}/api/auth
 Content-Type: application/json
 
@@ -17,10 +18,16 @@ Content-Type: application/json
   "remember": false
 }
 
+### Token
+@token = {{login.response.body.data.token}}
 
 ### Refresh Token
+# @name reauth
 GET {{base_url}}/api/auth/refresh
 Cookie: x-token={{refresh_token}}
+
+### Token
+@token = {{reauth.response.body.data.token}}
 
 
 ### Logout
@@ -127,3 +134,7 @@ Authorization: Bearer {{token}}
   "icon": "database",
   "route": "/"
 }
+
+### REMOVE SIDEBAR
+DELETE {{base_url}}/api/sidebars/master
+Authorization: Bearer {{token}}
