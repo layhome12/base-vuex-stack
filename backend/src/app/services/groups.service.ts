@@ -6,6 +6,10 @@ export class GroupService {
     return await db("groups").whereNot("id", 1).select(["id", "name"]);
   }
 
+  static async groupExist(id: number) {
+    return await db("groups").whereNot("id", 1).where("id", id).first();
+  }
+
   static async permission(groupId: number, key: string) {
     groupId = Safety.number(groupId);
 
@@ -16,5 +20,13 @@ export class GroupService {
       })
       .select(["read", "create", "update", "delete"])
       .first();
+  }
+
+  static async save(data: AccessGroup[], id: number) {
+    return await db.transaction(async (trx) => {
+      await trx("group_access").where("group_id", id).delete();
+
+      return await trx("group_access").insert(data);
+    });
   }
 }

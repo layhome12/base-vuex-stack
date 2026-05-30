@@ -69,7 +69,7 @@ export class AuthController {
         gid: auth.gid,
         uid: auth.uid,
       },
-      "10m",
+      "30m",
     );
 
     return Response.http(res, 200, "Refresh authentication successful", {

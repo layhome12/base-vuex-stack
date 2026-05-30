@@ -91,6 +91,20 @@ Authorization: Bearer {{token}}
 GET {{base_url}}/api/groups
 Authorization: Bearer {{token}}
 
+### Access Group
+PUT {{base_url}}/api/groups/{id}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+[
+  {
+    "sidebar_key": "master",
+    "read": false,
+    "create": false,
+    "update": false,
+    "delete": false
+  }
+]
 
 # --------------------------------------------------
 # PROFILE
@@ -112,6 +126,10 @@ Content-Type: application/json
   "password": null,
   "biodata": "-"
 }
+
+### Sidebar Access
+GET {{base_url}}/api/profile/access
+Authorization: Bearer {{token}}
 
 # --------------------------------------------------
 # SIDEBARS
