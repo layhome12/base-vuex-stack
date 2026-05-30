@@ -6,6 +6,7 @@ import { ProfileRequest } from "../app/requests/profile.request";
 const router = Router();
 
 router.get("/", ProfileController.index);
+router.get("/access", ProfileController.access);
 router.put("/", ZodValidator(ProfileRequest), ProfileController.update);
 
 export default router;

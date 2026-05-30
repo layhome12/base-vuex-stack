@@ -3,6 +3,7 @@ import Response from "../../common/helpers/response.helper";
 import Hash from "../../common/helpers/hash.helper";
 import { ProfileService } from "../services/profile.service";
 import { UserService } from "../services/users.service";
+import { GroupService } from "../services/groups.service";
 
 export class ProfileController {
   static async index(req: Request, res: ExResponse) {
@@ -56,6 +57,17 @@ export class ProfileController {
       return Response.http(res, 200, "Updating profile successful");
     } catch (err) {
       return Response.http(res, 500, "Something wrong when save profile");
+    }
+  }
+
+  static async access(req: Request, res: ExResponse) {
+    try {
+      const auth = req["user"] as JwtPayload;
+      const sidebars = await GroupService.sidebarAccess(auth.gid);
+
+      return Response.http(res, 200, "Fetch Successfull", sidebars);
+    } catch (err) {
+      return Response.http(res, 500, "Error while fetch");
     }
   }
 }
