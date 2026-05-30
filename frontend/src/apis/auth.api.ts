@@ -32,6 +32,7 @@ const getProfile = async () => {
       email: res.data.data.email,
       username: res.data.data.username,
       picture: res.data.data.picture,
+      group: res.data.data.groups.name,
     });
   }
 };

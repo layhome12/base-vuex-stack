@@ -11,6 +11,7 @@ interface Profile {
   username: string;
   email: string;
   picture: string;
+  group: string;
 }
 
 export const useAuthStore = defineStore("auth", {
@@ -21,6 +22,7 @@ export const useAuthStore = defineStore("auth", {
       username: "",
       email: "",
       picture: "",
+      group: "",
     },
   }),
   actions: {
@@ -37,6 +39,7 @@ export const useAuthStore = defineStore("auth", {
         username: "",
         email: "",
         picture: "",
+        group: "",
       };
     },
     async getSidebarAccess() {

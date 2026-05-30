@@ -50,7 +50,9 @@ onMounted(() => init());
               <span class="truncate font-medium">
                 App Dev
               </span>
-              <span class="truncate text-xs">Developer</span>
+              <span class="truncate text-xs">
+                {{ auth.profile.group }}
+              </span>
             </div>
             <LucideIcon icon="chevrons-up-down" class="ml-auto"></LucideIcon>
           </SidebarMenuButton>
