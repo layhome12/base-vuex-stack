@@ -36,4 +36,18 @@ const getProfile = async () => {
   }
 };
 
-export { signIn, signOut, getProfile };
+const getSidebarAccessed = async () => {
+  try {
+    const res = await baseApi.get("/profile/access", {
+      headers: {
+        Authorization: "Bearer " + getBearer(),
+      },
+    });
+
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};
+
+export { signIn, signOut, getProfile, getSidebarAccessed };

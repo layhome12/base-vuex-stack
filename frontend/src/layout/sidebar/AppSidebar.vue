@@ -13,12 +13,15 @@ import {
 import TeamSwitcher from "./TeamSwitcher.vue"
 
 import { useSidebarStore } from "@/stores/sidebar"
+import { onMounted } from "vue"
+import { useAuthStore } from "@/stores/auth.ts"
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: "icon",
 })
 
 const sidebar = useSidebarStore();
+const auth = useAuthStore();
 
 const data = {
   teams: [
@@ -29,6 +32,14 @@ const data = {
     },
   ],
 }
+
+function init() {
+  if (!sidebar.menus.length) {
+    auth.getSidebarAccess();
+  }
+}
+
+onMounted(() => init());
 </script>
 
 <template>

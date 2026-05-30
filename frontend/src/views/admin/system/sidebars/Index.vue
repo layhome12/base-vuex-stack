@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { removeSidebar, saveSidebar } from '@/apis/sidebars.api';
+import ErrorField, { type ErrorMessage } from '@/components/ErrorField.vue';
 import LucideIcon from '@/components/LucideIcon.vue';
 import AlertDialog from '@/components/ui/alert-dialog/AlertDialog.vue';
 import AlertDialogAction from '@/components/ui/alert-dialog/AlertDialogAction.vue';
@@ -34,16 +36,70 @@ import SidebarMenuItem from '@/components/ui/sidebar/SidebarMenuItem.vue';
 import SidebarMenuSub from '@/components/ui/sidebar/SidebarMenuSub.vue';
 import SidebarMenuSubButton from '@/components/ui/sidebar/SidebarMenuSubButton.vue';
 import SidebarMenuSubItem from '@/components/ui/sidebar/SidebarMenuSubItem.vue';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
+import { Response } from '@/lib/response';
 import { useSidebarStore } from '@/stores/sidebar';
 import { ChevronRight } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { toast } from 'vue-sonner';
 
 const sidebarStore = useSidebarStore();
 const dialog = ref({
     save: false,
     remove: false
 });
+const loading = ref({
+    onSave: false,
+    onRemove: false,
+});
+const errorMessage = ref<ErrorMessage[]>([]);
 
+function init() {
+    if (!sidebarStore.menus.length) {
+        sidebarStore.fetchData();
+    }
+}
+
+async function save() {
+    loading.value.onSave = true;
+    const res = await saveSidebar(sidebarStore.form);
+    loading.value.onSave = false;
+
+    if (!Response.isOk(res)) {
+        errorMessage.value = res.errors ?? [];
+        toast.error(res.message);
+        return;
+    }
+
+    dialog.value.save = false;
+    toast.success("Saved successfull");
+
+    sidebarStore.fetchData();
+}
+
+async function remove() {
+    loading.value.onRemove = true;
+    const res = await removeSidebar(sidebarStore.form.key);
+    loading.value.onRemove = false;
+
+    if (!Response.isOk(res)) {
+        errorMessage.value = res.errors ?? [];
+        toast.error(res.message);
+        return;
+    }
+
+    dialog.value.remove = false;
+    toast.success("Remove successfull");
+
+    sidebarStore.fetchData();
+}
+
+function dialogRemoveShow(key: string) {
+    sidebarStore.form.key = key;
+    dialog.value.remove = true;
+}
+
+onMounted(() => init());
 
 </script>
 
@@ -63,7 +119,8 @@ const dialog = ref({
             <div class="grid grid-cols-2">
                 <Card class="p-2 col-span-2 md:col-span-1">
                     <CardContent class="p-2">
-                        <Button variant="default" size="sm" class="mb-4" @click="dialog.save = true">
+                        <Button variant="default" size="sm" class="mb-4"
+                            @click="[dialog.save = true, sidebarStore.resetForm()]">
                             <LucideIcon icon="plus"></LucideIcon>
                         </Button>
                         <SidebarMenu>
@@ -93,7 +150,7 @@ const dialog = ref({
                                                             </Badge>
                                                             <button type="button"
                                                                 class="ml-2 text-muted-foreground hover:text-destructive transition-colors"
-                                                                @click="dialog.remove = true">
+                                                                @click="dialogRemoveShow(subItem.key)">
                                                                 <LucideIcon icon="trash-2" class="w-4 h-4" />
                                                             </button>
                                                         </div>
@@ -117,7 +174,7 @@ const dialog = ref({
                                             </Badge>
                                             <button type="button"
                                                 class="ml-2 text-muted-foreground hover:text-destructive transition-colors"
-                                                @click="dialog.remove = true">
+                                                @click="dialogRemoveShow(item.key)">
                                                 <LucideIcon icon="trash-2" class="w-4 h-4" />
                                             </button>
                                         </div>
@@ -139,44 +196,58 @@ const dialog = ref({
                     Fill information below.
                 </DialogDescription>
             </DialogHeader>
-            <div class="grid gap-3 md:grid-cols-2">
-                <div class="col-span-2 md:col-span-1">
+            <div class="grid gap-3 md:grid-cols-6">
+                <div class="col-span-3 md:col-span-3">
                     <Label class="mb-2">Parent</Label>
-                    <Select>
+                    <Select v-model="sidebarStore.form.parent_key">
                         <SelectTrigger class="w-full">
                             <SelectValue placeholder="Parent" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="system">
-                                System
+                            <SelectItem :value="null">
+                                Parent
+                            </SelectItem>
+                            <SelectItem v-for="(item, i) in sidebarStore.parentOfChild()" :key="i" :value="item.key">
+                                {{ item.name }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
+                    <ErrorField name="parent_key" :data="errorMessage" />
                 </div>
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-3 md:col-span-3">
                     <Label class="mb-2">Key</Label>
-                    <Input placeholder="menu_key" />
+                    <Input placeholder="menu_key" v-model="sidebarStore.form.key" />
+                    <ErrorField name="key" :data="errorMessage" />
                 </div>
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-6 md:col-span-3">
                     <Label class="mb-2">Name</Label>
-                    <Input placeholder="Menu #1" />
+                    <Input placeholder="Menu #1" v-model="sidebarStore.form.name" />
+                    <ErrorField name="name" :data="errorMessage" />
                 </div>
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-3 md:col-span-2">
                     <Label class="mb-2">Icon</Label>
-                    <Input placeholder="lucide-icon" />
+                    <Input placeholder="lucide-icon" v-model="sidebarStore.form.icon" />
+                    <ErrorField name="icon" :data="errorMessage" />
                 </div>
-                <div class="col-span-2">
+                <div class="col-span-3 md:col-span-1">
+                    <Label class="mb-2">Seq</Label>
+                    <Input placeholder="1" type="number" v-model="sidebarStore.form.seq" />
+                    <ErrorField name="seq" :data="errorMessage" />
+                </div>
+                <div class="col-span-6">
                     <Label class="mb-2">Route</Label>
-                    <Input placeholder="/admin/feature" />
+                    <Input placeholder="/admin/feature" v-model="sidebarStore.form.route" />
+                    <ErrorField name="route" :data="errorMessage" />
                 </div>
             </div>
             <DialogFooter>
-                <Button variant="outline" @click="dialog.save = false">
+                <Button variant="outline" @click="dialog.save = false" :disabled="loading.onSave">
                     Cancel
                 </Button>
-                <Button>
-                    <LucideIcon icon="save" class="mr-1" />
-                    Save
+                <Button @click="save()" :disabled="loading.onSave">
+                    <Spinner v-if="loading.onSave" class="animate-spin" />
+                    <LucideIcon v-else icon="save" class="mr-1" />
+                    {{ loading.onSave ? "Saving.." : "Save" }}
                 </Button>
             </DialogFooter>
         </DialogContent>
@@ -198,12 +269,14 @@ const dialog = ref({
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter class="mt-4">
-                <AlertDialogCancel @click="dialog.remove = false">
+                <AlertDialogCancel @click="dialog.remove = false" :disabled="loading.onRemove">
                     Cancel
                 </AlertDialogCancel>
-                <AlertDialogAction class="bg-destructive text-white hover:bg-destructive/90">
-                    <LucideIcon icon="trash-2" class="mr-1" />
-                    Delete
+                <AlertDialogAction @click="remove()" class="bg-destructive text-white hover:bg-destructive/90"
+                    :disabled="loading.onRemove">
+                    <Spinner v-if="loading.onRemove" class="animate-spin" />
+                    <LucideIcon v-else icon="trash-2" class="mr-1" />
+                    {{ loading.onRemove ? "Deleting.." : "Delete" }}
                 </AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
