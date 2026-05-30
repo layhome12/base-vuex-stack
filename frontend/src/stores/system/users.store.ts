@@ -1,11 +1,13 @@
 import { getGroups } from "@/apis/groups.api";
 import { getUsers } from "@/apis/users.api";
+import { Response } from "@/lib/response";
 import type {
   FetchResponseTable,
   OnChangeTable,
   PaginationTable,
 } from "@/types/tanstack-table";
 import { defineStore } from "pinia";
+import { toast } from "vue-sonner";
 
 interface FormUser {
   id?: number;
@@ -59,6 +61,11 @@ export const useUserStore = defineStore("users", {
           ...this.params,
           search: this.search,
         });
+
+        if (!Response.isOk(res)) {
+          toast.error(res.message);
+          return;
+        }
 
         const { items, meta } = res.data as FetchResponseTable;
         this.items = items;
