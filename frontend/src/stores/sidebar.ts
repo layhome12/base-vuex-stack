@@ -22,10 +22,16 @@ export interface SidebarMenu {
   items: SidebarMenuItem[];
 }
 
+export interface BreadcrumbSetter {
+  title: string;
+  url?: string;
+}
+
 export const useSidebarStore = defineStore("sidebar", {
   state: () => ({
     loading: false,
     menus: [] as SidebarMenu[],
+    breadcrumbs: [] as BreadcrumbSetter[],
     form: {
       key: "",
       parent_key: null,
@@ -85,6 +91,9 @@ export const useSidebarStore = defineStore("sidebar", {
         icon: "",
         route: "",
       };
+    },
+    setBreadcrumbs(list: BreadcrumbSetter[]) {
+      this.breadcrumbs = list;
     },
   },
 });

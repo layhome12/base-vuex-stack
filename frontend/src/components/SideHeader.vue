@@ -68,15 +68,17 @@ onBeforeUnmount(() => {
       <Separator orientation="vertical" class="mx-2 data-[orientation=vertical]:h-4" />
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink href="#">
-              Main
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator class="hidden md:block" />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Dashboard</BreadcrumbPage>
-          </BreadcrumbItem>
+          <template v-for="(item, index) in sidebar.breadcrumbs" :key="index">
+            <BreadcrumbItem :class="index < sidebar.breadcrumbs.length - 1 ? 'hidden md:flex' : ''">
+              <BreadcrumbLink v-if="item.url && index < sidebar.breadcrumbs.length - 1" :href="item.url">
+                {{ item.title }}
+              </BreadcrumbLink>
+              <BreadcrumbPage v-else>
+                {{ item.title }}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator v-if="index < sidebar.breadcrumbs.length - 1" class="hidden md:block" />
+          </template>
         </BreadcrumbList>
       </Breadcrumb>
       <div class="ml-auto flex items-center gap-2">
