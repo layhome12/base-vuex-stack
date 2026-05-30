@@ -54,6 +54,15 @@ const loading = ref({
 });
 const errorMessage = ref<ErrorMessage[]>([]);
 
+sidebarStore.setBreadcrumbs([
+    {
+        title: "System",
+    },
+    {
+        title: "Sidebars",
+    }
+]);
+
 function init() {
     if (!sidebarStore.menus.length) {
         sidebarStore.fetchData();

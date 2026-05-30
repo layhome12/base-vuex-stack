@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import LucideIcon from "@/components/LucideIcon.vue";
+import { useSidebarStore } from "@/stores/sidebar";
+
+const sidebar = useSidebarStore();
+
+sidebar.setBreadcrumbs([
+    {
+        title: "Dashboard",
+    }
+]);
 </script>
 
 <template>

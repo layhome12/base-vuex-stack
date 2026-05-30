@@ -41,10 +41,13 @@ import AlertDialogCancel from "@/components/ui/alert-dialog/AlertDialogCancel.vu
 import AlertDialogAction from "@/components/ui/alert-dialog/AlertDialogAction.vue"
 import Badge from "@/components/ui/badge/Badge.vue"
 import { formatDate } from "@/lib/helper"
+import { useSidebarStore } from "@/stores/sidebar"
 
 let debounce: ReturnType<typeof setTimeout>
 
 const userStore = useUserStore();
+const sidebar = useSidebarStore();
+
 const dialog = ref({
     save: false,
     remove: false,
@@ -54,6 +57,15 @@ const loading = ref({
     onRemove: false,
 })
 const errorMessage = ref<ErrorMessage[]>([]);
+
+sidebar.setBreadcrumbs([
+    {
+        title: "System",
+    },
+    {
+        title: "Users",
+    }
+]);
 
 const columns = ref([
     {
@@ -292,8 +304,7 @@ onMounted(() => init())
             <AlertDialog v-model:open="dialog.remove">
                 <AlertDialogContent class="sm:max-w-[400px]">
                     <AlertDialogHeader>
-                        <div
-                            class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
                             <LucideIcon icon="triangle-alert" class="text-destructive"></LucideIcon>
                         </div>
                         <AlertDialogTitle class="text-center text-xl">
