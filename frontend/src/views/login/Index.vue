@@ -58,25 +58,23 @@ const login = async () => {
 <template>
     <div class="grid min-h-svh lg:grid-cols-2">
         <div class="flex flex-col gap-4 p-6 md:p-10">
-            <div class="flex justify-center gap-2 md:justify-start">
-                <a href="#" class="flex items-center gap-2 font-medium">
-                    <div class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-                        <LucideIcon icon="GalleryVerticalEnd" class="size-4"></LucideIcon>
-                    </div>
-                    MadHome Dev
-                </a>
-            </div>
             <div class="flex flex-1 items-center justify-center">
                 <div class="w-full max-w-xs">
                     <form :class="cn('flex flex-col gap-6')" @submit.prevent="login">
                         <FieldGroup>
-                            <div class="flex flex-col items-center gap-1 text-center">
-                                <h1 class="text-2xl font-bold">
-                                    Login to your account
-                                </h1>
-                                <p class="text-muted-foreground text-sm text-balance">
-                                    Enter your email below to login to your account
-                                </p>
+                            <div class="flex flex-col items-center gap-4 text-center">
+                                <div
+                                    class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
+                                    <LucideIcon icon="diamond" class="h-8 w-8" />
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold tracking-tight">
+                                        App Name
+                                    </h2>
+                                    <p class="text-muted-foreground text-sm mt-1">
+                                        Simple. Powerful. Reliable.
+                                    </p>
+                                </div>
                             </div>
                             <Field>
                                 <FieldLabel for="email">

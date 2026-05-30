@@ -28,6 +28,7 @@ import {
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { signOut } from "@/apis/auth.api";
+import { resetStores } from "@/lib/helper";
 
 const { isMobile } = useSidebar()
 const router = useRouter();
@@ -49,6 +50,9 @@ const logout = () => {
   // -- logout
   auth.logout();
   router.push("/");
+
+  // -- clear stores
+  resetStores();
 };
 </script>
 
