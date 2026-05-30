@@ -70,10 +70,11 @@ onBeforeUnmount(() => {
         <BreadcrumbList>
           <template v-for="(item, index) in sidebar.breadcrumbs" :key="index">
             <BreadcrumbItem :class="index < sidebar.breadcrumbs.length - 1 ? 'hidden md:flex' : ''">
-              <BreadcrumbLink v-if="item.url && index < sidebar.breadcrumbs.length - 1" :href="item.url">
+              <BreadcrumbLink v-if="item.url && index < sidebar.breadcrumbs.length - 1" :href="item.url"
+                class="text-muted-foreground">
                 {{ item.title }}
               </BreadcrumbLink>
-              <BreadcrumbPage v-else>
+              <BreadcrumbPage :class="index < sidebar.breadcrumbs.length - 1 ? 'text-muted-foreground' : ''">
                 {{ item.title }}
               </BreadcrumbPage>
             </BreadcrumbItem>

@@ -18,7 +18,7 @@ sidebar.setBreadcrumbs([
                 <div class="text-center">
                     <div
                         class="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-3xl border bg-card shadow-sm">
-                        <LucideIcon icon="layout-dashboard" class="h-12 w-12 text-primary" />
+                        <LucideIcon icon="diamond" class="h-12 w-12 text-primary" />
                     </div>
                     <h1 class="text-[22px]">
                         Dashboard
