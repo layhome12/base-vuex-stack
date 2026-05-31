@@ -6,12 +6,13 @@ import {
   type SidebarMenuItem,
 } from "./sidebar";
 
-interface Profile {
+export interface Profile {
   name: string;
   username: string;
   email: string;
   picture: string;
   group: string;
+  biodata: string;
 }
 
 export const useAuthStore = defineStore("auth", {
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore("auth", {
       email: "",
       picture: "",
       group: "",
+      biodata: "",
     },
   }),
   actions: {
@@ -40,6 +42,7 @@ export const useAuthStore = defineStore("auth", {
         email: "",
         picture: "",
         group: "",
+        biodata: "",
       };
     },
     async getSidebarAccess() {

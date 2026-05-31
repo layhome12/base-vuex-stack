@@ -25,6 +25,11 @@ const router = createRouter({
           component: () => import("@/views/admin/dashboard/Index.vue"),
         },
         {
+          path: "profile",
+          name: "profile",
+          component: () => import("@/views/admin/profile/Index.vue"),
+        },
+        {
           path: "system",
           name: "system",
           children: [

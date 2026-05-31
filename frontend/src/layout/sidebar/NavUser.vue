@@ -93,12 +93,12 @@ const logout = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <LucideIcon icon="circle-user" />
+            <DropdownMenuItem @click="router.push('/admin/profile')" class="cursor-pointer">
+              <LucideIcon icon="user" />
               Account
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuItem @click="logout">
+          <DropdownMenuItem @click="logout" class="cursor-pointer">
             <LucideIcon icon="log-out"></LucideIcon>
             Log out
           </DropdownMenuItem>

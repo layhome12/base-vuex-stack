@@ -33,6 +33,7 @@ const getProfile = async () => {
       username: res.data.data.username,
       picture: res.data.data.picture,
       group: res.data.data.groups.name,
+      biodata: res.data.data.biodata,
     });
   }
 };
@@ -51,4 +52,18 @@ const getSidebarAccessed = async () => {
   }
 };
 
-export { signIn, signOut, getProfile, getSidebarAccessed };
+const saveProfile = async (payload: any) => {
+  try {
+    const res = await baseApi.put("/profile", payload, {
+      headers: {
+        Authorization: "Bearer " + getBearer(),
+      },
+    });
+
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};
+
+export { signIn, signOut, getProfile, getSidebarAccessed, saveProfile };
