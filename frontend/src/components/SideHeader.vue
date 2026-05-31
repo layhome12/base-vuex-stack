@@ -18,7 +18,7 @@ import InputGroup from "./ui/input-group/InputGroup.vue";
 import InputGroupInput from "./ui/input-group/InputGroupInput.vue";
 import InputGroupAddon from "./ui/input-group/InputGroupAddon.vue";
 import Badge from "./ui/badge/Badge.vue";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import Dialog from "./ui/dialog/Dialog.vue";
 import DialogContent from "./ui/dialog/DialogContent.vue";
 import Command from "./ui/command/Command.vue";
@@ -28,7 +28,7 @@ import CommandEmpty from "./ui/command/CommandEmpty.vue";
 import CommandGroup from "./ui/command/CommandGroup.vue";
 import CommandItem from "./ui/command/CommandItem.vue";
 import { useRouter } from "vue-router";
-import { useSidebarStore } from "@/stores/sidebar";
+import { useSidebarStore, type SidebarMenu } from "@/stores/sidebar";
 import DialogTitle from "./ui/dialog/DialogTitle.vue";
 import DialogHeader from "./ui/dialog/DialogHeader.vue";
 import DialogDescription from "./ui/dialog/DialogDescription.vue";
@@ -49,6 +49,19 @@ const goTo = (path: string) => {
   router.push(path);
   open.value = false;
 }
+
+const menus = computed((): SidebarMenu[] => [
+  {
+    key: "profile",
+    seq: 1,
+    title: "Account",
+    url: "/admin/profile",
+    icon: "user",
+    isActive: false,
+    items: [],
+  },
+  ...sidebar.menus,
+]);
 
 onMounted(() => {
   window.addEventListener("keydown", handleShortcut)
@@ -138,7 +151,8 @@ onBeforeUnmount(() => {
 
   <!-- Popup -->
   <Dialog v-model:open="open">
-    <DialogContent class="overflow-hidden p-0 sm:max-w-xl [&>button]:hidden">
+    <DialogContent
+      class="overflow-hidden p-0 top-[5vh] translate-y-0 sm:top-1/2 sm:translate-y-[-50%] sm:max-w-xl [&>button]:hidden">
       <DialogHeader class="hidden">
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
@@ -148,9 +162,9 @@ onBeforeUnmount(() => {
         <CommandInput placeholder="Search menu..." />
         <CommandList>
           <CommandEmpty>
-            Menu tidak ditemukan
+            No data available
           </CommandEmpty>
-          <template v-for="parent in sidebar.menus" :key="parent.title">
+          <template v-for="parent in menus" :key="parent.title">
             <!-- Parent tanpa child -->
             <CommandGroup v-if="parent.items.length === 0" heading="">
               <CommandItem :value="parent.title" @select="goTo(parent.url)" class="cursor-pointer">

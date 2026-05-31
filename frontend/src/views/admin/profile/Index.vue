@@ -35,7 +35,7 @@ const profileStore = useProfileStore();
 
 sidebarStore.setBreadcrumbs([
     {
-        title: "Profile",
+        title: "My Account",
     },
 ]);
 
@@ -100,7 +100,7 @@ async function save() {
                     <div class="mb-6">
                         <h1 class="text-xl mb-1">
                             <LucideIcon icon="user" class="inline mr-1 w-5 h-5"></LucideIcon>
-                            My Profile
+                            My Account
                         </h1>
                         <p class="text-sm text-muted-foreground">
                             View your account information and access details.
