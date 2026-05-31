@@ -5,6 +5,7 @@ import { GroupRequest } from "../app/requests/groups.request";
 
 const router = Router();
 router.get("/", GroupsController.index);
+router.get("/:id", GroupsController.getAccess);
 router.put("/:id", ZodValidator(GroupRequest), GroupsController.access);
 
 export default router;

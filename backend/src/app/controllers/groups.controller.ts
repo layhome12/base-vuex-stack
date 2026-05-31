@@ -9,6 +9,13 @@ export class GroupsController {
     return Response.http(res, 200, "Fetch successful", data);
   }
 
+  static async getAccess(req: Request, res: ExResponse): Promise<Response> {
+    const gId = Safety.number(req.params.id as string);
+    const data = await GroupService.groupAccess(gId);
+    
+    return Response.http(res, 200, "Fetch successful", data);
+  }
+
   static async access(req: Request, res: ExResponse): Promise<Response> {
     try {
       const gId = Safety.number(req.params.id as string);

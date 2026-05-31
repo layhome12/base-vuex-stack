@@ -26,10 +26,6 @@ Content-Type: application/json
 GET {{base_url}}/api/auth/refresh
 Cookie: x-token={{refresh_token}}
 
-### Token
-@token = {{reauth.response.body.data.token}}
-
-
 ### Logout
 GET {{base_url}}/api/auth/logout
 Authorization: Bearer {{token}}
@@ -46,7 +42,7 @@ Authorization: Bearer {{token}}
 
 
 ### Get User By ID
-GET {{base_url}}/api/users/1
+GET {{base_url}}/api/users/{id}
 Authorization: Bearer {{token}}
 
 
@@ -65,7 +61,7 @@ Content-Type: application/json
 
 
 ### Update User
-PUT {{base_url}}/api/users/1
+PUT {{base_url}}/api/users/{id}
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -79,7 +75,7 @@ Content-Type: application/json
 
 
 ### Delete User
-DELETE {{base_url}}/api/users/1
+DELETE {{base_url}}/api/users/{id}
 Authorization: Bearer {{token}}
 
 
@@ -89,6 +85,10 @@ Authorization: Bearer {{token}}
 
 ### Get Group
 GET {{base_url}}/api/groups
+Authorization: Bearer {{token}}
+
+### Get Access
+GET {{base_url}}/api/groups/{id}
 Authorization: Bearer {{token}}
 
 ### Access Group

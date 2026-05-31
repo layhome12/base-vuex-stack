@@ -30,6 +30,12 @@ export class GroupService {
     });
   }
 
+  static async groupAccess(id: number) {
+    return await db("group_access")
+      .where("group_id", id)
+      .select(["sidebar_key", "read", "create", "update", "delete"]);
+  }
+
   static async sidebarAccess(groupId: number): Promise<SidebarItem[]> {
     const rows = await db("sidebars")
       .modify((query) => {
