@@ -52,6 +52,18 @@ const router = createRouter({
                 },
               ],
             },
+            {
+              path: "groups",
+              name: "groups",
+              children: [
+                {
+                  path: "",
+                  name: "group-index",
+                  component: () =>
+                    import("@/views/admin/system/groups/Index.vue"),
+                },
+              ],
+            },
           ],
         },
       ],
