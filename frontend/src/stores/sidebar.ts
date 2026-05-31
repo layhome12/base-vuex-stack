@@ -1,7 +1,6 @@
 import { getSidebars } from "@/apis/sidebars.api";
 import { Response } from "@/lib/response";
 import { defineStore } from "pinia";
-import { toast } from "vue-sonner";
 
 export interface SidebarMenuItem {
   key: string;
@@ -48,7 +47,6 @@ export const useSidebarStore = defineStore("sidebar", {
         const res = await getSidebars();
 
         if (!Response.isOk(res)) {
-          toast.error(res.message);
           return;
         }
 

@@ -7,7 +7,6 @@ import type {
   PaginationTable,
 } from "@/types/tanstack-table";
 import { defineStore } from "pinia";
-import { toast } from "vue-sonner";
 
 interface FormUser {
   id?: number;
@@ -63,7 +62,6 @@ export const useUserStore = defineStore("users", {
         });
 
         if (!Response.isOk(res)) {
-          toast.error(res.message);
           return;
         }
 
