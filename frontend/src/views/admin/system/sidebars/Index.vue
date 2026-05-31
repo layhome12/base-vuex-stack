@@ -199,7 +199,7 @@ onMounted(() => init());
 
     <Dialog v-model:open="dialog.save">
         <DialogContent class="sm:max-w-[540px]">
-            <DialogHeader class="mb-2">
+            <DialogHeader class="mb-2 text-left">
                 <DialogTitle>Sidebar</DialogTitle>
                 <DialogDescription>
                     Fill information below.
@@ -249,7 +249,7 @@ onMounted(() => init());
                     <ErrorField name="route" :data="errorMessage" />
                 </div>
             </div>
-            <DialogFooter>
+            <DialogFooter class="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
                 <Button variant="outline" @click="dialog.save = false" :disabled="loading.onSave">
                     Cancel
                 </Button>
@@ -277,8 +277,8 @@ onMounted(() => init());
                     from the system.
                 </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter class="mt-4">
-                <AlertDialogCancel @click="dialog.remove = false" :disabled="loading.onRemove">
+            <AlertDialogFooter class="mt-4 grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+                <AlertDialogCancel class="my-0" @click="dialog.remove = false" :disabled="loading.onRemove">
                     Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction @click="remove()" class="bg-destructive text-white hover:bg-destructive/90"

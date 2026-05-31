@@ -245,7 +245,7 @@ onMounted(() => init())
 
             <Dialog v-model:open="dialog.save">
                 <DialogContent class="sm:max-w-[540px]">
-                    <DialogHeader>
+                    <DialogHeader class="text-left">
                         <DialogTitle>Form User</DialogTitle>
                         <DialogDescription>
                             Fill user information below.
@@ -278,7 +278,7 @@ onMounted(() => init())
                         </div>
                         <div class="col-span-2 md:col-span-1">
                             <Label class="mb-2">Password</Label>
-                            <Input type="password" v-model="userStore.form.password" placeholder="••••••••" />
+                            <Input type="password" v-model="userStore.form.password" placeholder="******" />
                             <ErrorField name="password" :data="errorMessage" />
                         </div>
                         <div class="col-span-2">
@@ -288,7 +288,7 @@ onMounted(() => init())
                         </div>
                     </div>
 
-                    <DialogFooter>
+                    <DialogFooter class="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
                         <Button variant="outline" @click="dialog.save = false" :disabled="loading.onSave">
                             Cancel
                         </Button>
@@ -316,8 +316,8 @@ onMounted(() => init())
                             from the system.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter class="mt-4">
-                        <AlertDialogCancel :disabled="loading.onRemove">
+                    <AlertDialogFooter class="mt-4 grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+                        <AlertDialogCancel class="my-0" :disabled="loading.onRemove">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction @click.prevent="remove" :disabled="loading.onRemove"

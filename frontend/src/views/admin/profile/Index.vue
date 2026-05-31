@@ -204,7 +204,7 @@ async function save() {
 
     <Dialog v-model:open="dialog">
         <DialogContent class="sm:max-w-[540px]">
-            <DialogHeader>
+            <DialogHeader class="text-left">
                 <DialogTitle>Edit Profile</DialogTitle>
                 <DialogDescription>
                     Fill profile information below.
@@ -237,7 +237,7 @@ async function save() {
                 </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter class="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
                 <Button variant="outline" @click="dialog = false" :disabled="loading.onSave">
                     Cancel
                 </Button>
