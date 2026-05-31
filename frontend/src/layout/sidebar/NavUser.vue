@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import {
-  IconDotsVertical,
-  IconLogout,
-  IconUserCircle,
-} from "@tabler/icons-vue"
-
-import {
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -29,6 +23,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { signOut } from "@/apis/auth.api";
 import { resetStores } from "@/lib/helper";
+import LucideIcon from "@/components/LucideIcon.vue";
 
 const { isMobile } = useSidebar()
 const router = useRouter();
@@ -75,7 +70,7 @@ const logout = () => {
                 {{ auth.profile.email }}
               </span>
             </div>
-            <IconDotsVertical class="ml-auto size-4" />
+            <LucideIcon icon="ellipsis-vertical" class="ml-auto size-4"></LucideIcon>
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -99,12 +94,12 @@ const logout = () => {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <IconUserCircle />
+              <LucideIcon icon="circle-user" />
               Account
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuItem @click="logout">
-            <IconLogout />
+            <LucideIcon icon="log-out"></LucideIcon>
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
