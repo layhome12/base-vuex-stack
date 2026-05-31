@@ -136,7 +136,7 @@ function changeLimit(value: AcceptableValue) {
       </div>
     </div>
 
-    <div class="border rounded-sm mb-2">
+    <div class="border rounded-sm bg-card mb-2">
       <Table>
         <!-- HEADER -->
         <TableHeader>

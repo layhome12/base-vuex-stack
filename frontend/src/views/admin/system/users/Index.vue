@@ -294,7 +294,7 @@ onMounted(() => init())
                         </Button>
                         <Button @click="save" :disabled="loading.onSave">
                             <Spinner v-if="loading.onSave" class="animate-spin" />
-                            <LucideIcon v-else icon="save" class="mr-1" />
+                            <LucideIcon v-else icon="save" />
                             {{ loading.onSave ? "Saving.." : "Save" }}
                         </Button>
                     </DialogFooter>
