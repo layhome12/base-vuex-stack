@@ -13,4 +13,26 @@ export default defineConfig({
   server: {
     host: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          const ext = assetInfo.name?.split(".").pop()?.toLowerCase() || "";
+
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico|webp/i.test(ext)) {
+            return "assets/img/[name]-[hash][extname]";
+          }
+
+          if (/css/i.test(ext)) {
+            return "assets/css/[name]-[hash][extname]";
+          }
+
+          return "assets/[ext]/[name]-[hash][extname]";
+        },
+
+        chunkFileNames: "assets/js/[name]-[hash].js",
+        entryFileNames: "assets/js/[name]-[hash].js",
+      },
+    },
+  },
 });
