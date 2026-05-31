@@ -18,4 +18,32 @@ const getGroups = async () => {
   }
 };
 
-export { getGroups };
+const getAccess = async (id: number) => {
+  try {
+    const res = await baseApi.get(`/groups/${id}`, {
+      headers: {
+        Authorization: "Bearer " + getBearer(),
+      },
+    });
+
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};
+
+const saveAccess = async (payload: any[], id: number) => {
+  try {
+    const res = await baseApi.put(`/groups/${id}`, payload, {
+      headers: {
+        Authorization: "Bearer " + getBearer(),
+      },
+    });
+
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};
+
+export { getGroups, getAccess, saveAccess };

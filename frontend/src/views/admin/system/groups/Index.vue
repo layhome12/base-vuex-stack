@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getAccess, saveAccess } from '@/apis/groups.api';
 import LucideIcon from '@/components/LucideIcon.vue';
 import Badge from '@/components/ui/badge/Badge.vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -19,12 +20,19 @@ import TableCell from '@/components/ui/table/TableCell.vue';
 import TableHead from '@/components/ui/table/TableHead.vue';
 import TableHeader from '@/components/ui/table/TableHeader.vue';
 import TableRow from '@/components/ui/table/TableRow.vue';
+import { Response } from '@/lib/response';
 import { useSidebarStore } from '@/stores/sidebar';
-import { useGroupStore } from '@/stores/system/groups.store';
+import { useGroupStore, type GroupAccess } from '@/stores/system/groups.store';
 import { ChevronRight } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
+import { toast } from 'vue-sonner';
 
 const sidebar = useSidebarStore();
 const groupStore = useGroupStore();
+const loading = ref({
+    onSave: false,
+    onGet: false,
+});
 
 sidebar.setBreadcrumbs([
     {
@@ -35,9 +43,73 @@ sidebar.setBreadcrumbs([
     }
 ]);
 
-function showAccess() {
+async function showAccess(item: any) {
+    groupStore.form.group_id = item.id;
+    groupStore.form.group_name = item.name;
+
+    loading.value.onGet = true;
+    const res = await getAccess(item.id);
+    loading.value.onGet = false;
+
+    if (!Response.isOk(res)) {
+        toast.error(res.message);
+        return;
+    }
+
+    const access: Record<string, GroupAccess> = res.data.reduce((acc: any, item: any) => {
+        acc[item.sidebar_key] = {
+            read: Boolean(item.read),
+            create: Boolean(item.create),
+            update: Boolean(item.update),
+            delete: Boolean(item.delete),
+        }
+
+        return acc
+    }, {});
+
+    // -- mapper
+    const keyOfSidebar = sidebar.keyOfData();
+    const result = Object.fromEntries(
+        keyOfSidebar.map(key => [key, access[key] ?? {
+            read: false,
+            create: false,
+            update: false,
+            delete: false,
+        }]))
+
+    groupStore.access = result;
     groupStore.display = 'FRM';
 }
+
+async function save() {
+    const result = Object.entries(groupStore.access)
+        .map(([sidebar_key, permission]) => ({
+            sidebar_key,
+            read: permission.read,
+            create: permission.create,
+            update: permission.update,
+            delete: permission.delete,
+        }));
+
+    loading.value.onSave = true;
+    const res = await saveAccess(result, groupStore.form.group_id);
+    loading.value.onSave = false;
+
+    if (!Response.isOk(res)) {
+        toast.error(res.message);
+        return;
+    }
+
+    toast.success("Saved permission access");
+}
+
+function init() {
+    if (!groupStore.items.length) {
+        groupStore.fetchData();
+    }
+}
+
+onMounted(() => init());
 </script>
 <template>
     <div class="@container/main flex flex-1 flex-col gap-2">
@@ -63,14 +135,21 @@ function showAccess() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                <TableRow>
+                                <TableRow v-if="groupStore.items.length == 0">
+                                    <TableCell :colspan="2" class="h-12 text-center text-muted-foreground">
+                                        {{ groupStore.loading ? 'Fetching..' : 'No data available' }}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow v-for="item, i in groupStore.items" :key="i">
                                     <TableCell>
-                                        <Button @click="showAccess()" variant="ghost"
-                                            class="h-8 w-8 p-0 cursor-pointer">
-                                            <LucideIcon icon="settings-2" />
+                                        <Button @click="showAccess(item)" variant="ghost"
+                                            class="h-8 w-8 p-0 cursor-pointer" :disabled="loading.onGet">
+                                            <LucideIcon v-if="loading.onGet" icon="loader-circle"
+                                                class="animate-spin" />
+                                            <LucideIcon v-else icon="settings-2" />
                                         </Button>
                                     </TableCell>
-                                    <TableCell>Administrator</TableCell>
+                                    <TableCell>{{ item.name }}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
@@ -82,7 +161,7 @@ function showAccess() {
                                 <Button variant="default" size="sm" @click="groupStore.display = 'IDX'">
                                     <LucideIcon icon="arrow-left"></LucideIcon>
                                 </Button>
-                                <h3 class="inline mx-3 text-lg">Administrator</h3>
+                                <h3 class="inline mx-3 text-lg">{{ groupStore.form.group_name }}</h3>
                             </div>
                             <SidebarMenu>
                                 <template v-for="item in sidebar.menus" :key="item.title">
@@ -91,7 +170,7 @@ function showAccess() {
                                         :default-open="item.isActive" class="group/collapsible">
                                         <SidebarMenuItem>
                                             <CollapsibleTrigger as-child>
-                                                <SidebarMenuButton :tooltip="item.title">
+                                                <SidebarMenuButton :tooltip="item.title" class="mb-1">
                                                     <LucideIcon :icon="item.icon" />
                                                     <span>{{ item.title }}</span>
                                                     <ChevronRight
@@ -114,22 +193,26 @@ function showAccess() {
 
                                                             <div class="flex flex-wrap gap-4">
                                                                 <label class="flex items-center gap-2 text-xs">
-                                                                    <Checkbox />
+                                                                    <Checkbox
+                                                                        v-model="groupStore.access[subItem.key].read" />
                                                                     <span>READ</span>
                                                                 </label>
 
                                                                 <label class="flex items-center gap-2 text-xs">
-                                                                    <Checkbox />
+                                                                    <Checkbox
+                                                                        v-model="groupStore.access[subItem.key].create" />
                                                                     <span>CREATE</span>
                                                                 </label>
 
                                                                 <label class="flex items-center gap-2 text-xs">
-                                                                    <Checkbox />
+                                                                    <Checkbox
+                                                                        v-model="groupStore.access[subItem.key].update" />
                                                                     <span>UPDATE</span>
                                                                 </label>
 
                                                                 <label class="flex items-center gap-2 text-xs">
-                                                                    <Checkbox />
+                                                                    <Checkbox
+                                                                        v-model="groupStore.access[subItem.key].delete" />
                                                                     <span>DELETE</span>
                                                                 </label>
                                                             </div>
@@ -152,24 +235,24 @@ function showAccess() {
                                                     {{ item.url }}
                                                 </Badge>
                                             </div>
-                                            <div class="flex flex-wrap gap-4 mx-[35px] mb-1">
+                                            <div class="flex flex-wrap gap-4 mx-[35px] my-1">
                                                 <label class="flex items-center gap-2 text-xs">
-                                                    <Checkbox />
+                                                    <Checkbox v-model="groupStore.access[item.key].read" />
                                                     <span>READ</span>
                                                 </label>
 
                                                 <label class="flex items-center gap-2 text-xs">
-                                                    <Checkbox />
+                                                    <Checkbox v-model="groupStore.access[item.key].create" />
                                                     <span>CREATE</span>
                                                 </label>
 
                                                 <label class="flex items-center gap-2 text-xs">
-                                                    <Checkbox />
+                                                    <Checkbox v-model="groupStore.access[item.key].update" />
                                                     <span>UPDATE</span>
                                                 </label>
 
                                                 <label class="flex items-center gap-2 text-xs">
-                                                    <Checkbox />
+                                                    <Checkbox v-model="groupStore.access[item.key].delete" />
                                                     <span>DELETE</span>
                                                 </label>
                                             </div>
@@ -179,12 +262,14 @@ function showAccess() {
                             </SidebarMenu>
 
                             <div class="flex gap-2 justify-end mt-4">
-                                <Button variant="outline" @click="groupStore.display = 'IDX'">
+                                <Button variant="outline" @click="groupStore.display = 'IDX'"
+                                    :disabled="loading.onSave">
                                     <LucideIcon icon="arrow-left" /> Back
                                 </Button>
-                                <Button>
-                                    <LucideIcon icon="save" />
-                                    Save
+                                <Button @click="save()" :disabled="loading.onSave">
+                                    <LucideIcon v-if="loading.onSave" icon="loader-circle" class="animate-spin" />
+                                    <LucideIcon v-else icon="save" />
+                                    {{ loading.onSave ? 'Saving..' : 'Save' }}
                                 </Button>
                             </div>
                         </CardContent>

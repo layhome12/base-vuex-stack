@@ -80,6 +80,11 @@ export const useSidebarStore = defineStore("sidebar", {
         name: menu.title,
       }));
     },
+    keyOfData(): string[] {
+      return this.menus.flatMap((menu) =>
+        menu.items?.length ? menu.items.map((item) => item.key) : [menu.key],
+      );
+    },
     resetForm() {
       this.form = {
         key: "",
