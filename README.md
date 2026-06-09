@@ -42,24 +42,6 @@ npm run build
 npm start
 ```
 
-## Notes
-
-If you encounter CORS issues during development, use your local IP instead of `localhost` and adjust the allowed `origin` in the backend CORS configuration.
-
-Example:
-
-Frontend:
-
-```txt
-http://192.168.1.10:5173
-```
-
-Backend CORS:
-
-```ts
-origin: ["http://192.168.1.10:5173"]
-```
-
 ---
 
 Made with ❤️ by **MadHome Team**
