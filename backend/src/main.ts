@@ -42,12 +42,17 @@ class App {
       skip: (req) => req.method === "OPTIONS",
     });
 
-    this.app.use(
-      cors({
-        origin: !corsOrigin ? ["*"] : corsOrigin.trim().split(","),
-        credentials: true,
-      }),
-    );
+    // -- cors on production
+    if (process.env.NODE_ENV == "production") {
+      this.app.use(
+        cors({
+          origin: !corsOrigin ? ["*"] : corsOrigin.trim().split(","),
+          credentials: true,
+        }),
+      );
+    } else {
+      this.app.use(cors());
+    }
 
     this.app.use(cookies());
     this.app.use(express.json());

@@ -3,10 +3,11 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 
 const baseUrl = import.meta.env.VITE_API_URL;
+const nodeEnv = import.meta.env.PROD;
 
 const baseApi = axios.create({
   baseURL: baseUrl,
-  withCredentials: true,
+  withCredentials: nodeEnv,
 });
 
 const getBearer = () => {
@@ -21,7 +22,7 @@ const setBearer = (token: string) => {
 
 const refreshAuthToken = async (failedReq: any) => {
   return fetch(`${baseUrl}/auth/refresh`, {
-    credentials: "include",
+    credentials: nodeEnv ? "include" : undefined,
   }).then(async (res) => {
     if (res.status !== 200) {
       const auth = useAuthStore();
