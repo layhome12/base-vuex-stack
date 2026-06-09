@@ -69,6 +69,13 @@ function init() {
     }
 }
 
+function create() {
+    sidebarStore.resetForm();
+
+    errorMessage.value = [];
+    dialog.value.save = true;
+}
+
 async function save() {
     loading.value.onSave = true;
     const res = await saveSidebar(sidebarStore.form);
@@ -129,7 +136,7 @@ onMounted(() => init());
                 <Card class="p-2 col-span-2 md:col-span-1">
                     <CardContent class="p-2">
                         <Button variant="default" size="sm" class="mb-4"
-                            @click="[dialog.save = true, sidebarStore.resetForm()]">
+                            @click="create">
                             <LucideIcon icon="plus"></LucideIcon>
                         </Button>
                         <SidebarMenu>

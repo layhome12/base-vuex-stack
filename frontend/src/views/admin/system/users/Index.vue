@@ -126,6 +126,8 @@ function search() {
 
 function create() {
     userStore.resetForm();
+
+    errorMessage.value = [];
     dialog.value.save = true;
 }
 
@@ -139,6 +141,7 @@ function edit(item: any) {
         biodata: item.biodata
     }
 
+    errorMessage.value = [];
     dialog.value.save = true;
 }
 

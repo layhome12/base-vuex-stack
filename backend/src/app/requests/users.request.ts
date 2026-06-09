@@ -30,7 +30,7 @@ export const UserCreateRequest = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
-    .max(15, "Name must not exceed 15 characters"),
+    .max(80, "Name must not exceed 80 characters"),
 
   email: z
     .string()
@@ -66,7 +66,7 @@ export const UserUpdateRequest = z.object({
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
-    .max(15, "Name must not exceed 15 characters"),
+    .max(80, "Name must not exceed 80 characters"),
 
   email: z
     .string()
